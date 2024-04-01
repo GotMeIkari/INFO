@@ -1,0 +1,86 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+double digit_count(double number) {
+	double result = 0;
+	while (number != 0) {
+		number /= 10;
+		result++;
+	}
+
+	return result;
+}
+
+float detect_pogr(float num) {
+    float epsilon = 1.0; // Машинный эпсилон
+    float absoluteError = 0.5 * pow(10, -4); // Предельная абсолютная погрешность
+    float relativeError = absoluteError / fabs(num); // Предельная относительная погрешность
+    printf("Исходное число: %.2f\n", num);
+    printf("Предельная абсолютная погрешность: %.6f\n", absoluteError);
+    printf("Предельная относительная погрешность: %.6f\n", relativeError);
+    return 0;
+}
+
+int task_1() {
+	double a, b, a_1, answer_a, answer_b, pogr_a, pogr_b;
+
+	cout << "Введите числитель первого равенства:" << endl;
+	cin >> a;
+	cout << "Введите знаменатель первого равенства:" << endl;
+	cin >> b;
+	cout << "Введите ваш ответ:" << endl;
+	cin >> answer_a;
+
+	cout << "Введите число под корнем второго равенства:" << endl;
+	cin >> a_1;
+	cout << "Введите ваш ответ:" << endl;
+	cin >> answer_b;
+
+	pogr_a = abs((a / b) - answer_a);
+	pogr_b = abs((sqrt(a_1)) - answer_b);
+
+	if (pogr_a > pogr_b) cout << "Второе равенство точнее";
+	else if (pogr_a < pogr_b) cout << "Первое равенство точнее";
+	else cout << "Оба равенства одинаково точные";
+	
+	printf("\n");
+	return 0;
+}
+
+int task_2() {
+	double x, pogr_x, answer_x;
+
+	cout << "Введите число:" << endl;
+	cin >> x;
+	cout << "Введите относительную погрешность в процентах:" << endl;
+	cin >> pogr_x;
+
+	answer_x = x * (1 + (pogr_x / 100));
+	if (abs(x - answer_x) < 0.01) cout << "Точное значение числа: " << (round(x * 100) / 100) << endl;
+	else cout << "Точное значение числа: " << x << endl;
+	
+	printf("\n");
+	return 0;
+}
+
+int task_3() {
+   double t, pogr_abst, pogr_otnt;
+	double raz;
+
+	cout << "Введите число:" << endl;
+	cin >> t;
+	
+	detect_pogr(t);
+	
+	printf("\n");
+	return 0;
+}
+
+int main() {
+	setlocale(LC_ALL, "RU");
+
+	task_1();
+	task_2();
+	task_3();
+}
