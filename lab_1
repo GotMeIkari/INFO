@@ -2,23 +2,14 @@
 #include <cmath>
 using namespace std;
 
-double digit_count(double number) {
-	double result = 0;
-	while (number != 0) {
-		number /= 10;
-		result++;
-	}
-
-	return result;
-}
-
 float detect_pogr(float num) {
-    float epsilon = 1.0; // Машинный эпсилон
-    float absoluteError = 0.5 * pow(10, -4); // Предельная абсолютная погрешность
-    float relativeError = absoluteError / fabs(num); // Предельная относительная погрешность
+    float epsilon = 1.0;
+    float absolute_pogr = 0.5 * pow(10, -4);
+    float relative_pogr = absolute_pogr / fabs(num);
+
     printf("Исходное число: %.2f\n", num);
-    printf("Предельная абсолютная погрешность: %.6f\n", absoluteError);
-    printf("Предельная относительная погрешность: %.6f\n", relativeError);
+    printf("Предельная абсолютная погрешность: %.6f\n", absolute_pogr);
+    printf("Предельная относительная погрешность: %.6f\n", relative_pogr);
     return 0;
 }
 
