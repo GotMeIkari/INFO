@@ -1,0 +1,72 @@
+#include <iostream>
+#include <cmath>
+
+double f(double x) {
+    // Здесь необходимо задать функцию, для которой будет проводиться вычисление по ряду Тейлора
+    // Пример: return sin(x);
+      int counter = 1;
+      int k = 2;
+      float answer = 1;
+       
+      while (abs(x) < 1) {
+         if (counter % 2 == 0) {
+            answer += k * pow(x, k - 1);
+            counter++;
+         } 
+           
+         else {
+            answer -= k * pow(x, k - 1);
+            counter++;
+         };
+      }
+       
+   return answer;
+}
+
+double f1(double x, double eps1) {
+    double sum = 0.0;
+    double term = x;
+    int n = 1;
+
+    while (std::abs(term) > eps1) {
+        sum += term;
+        term = -term * x * x / (2 * n) / (2 * n + 1);
+        n++;
+    }
+
+    return sum;
+}
+
+double f2(double x, double eps2) {
+    double sum = 0.0;
+    double term = x;
+    int n = 1;
+
+    while (std::abs(term) > eps2) {
+        sum += term;
+        term = -term * x * x / (2 * n) / (2 * n + 1);
+        n++;
+    }
+
+    return sum;
+}
+
+int main() {
+    double xn, xk, dx;
+    // Ввод значений xn, xk, dx
+    // Пример: std::cin >> xn >> xk >> dx;
+    std::cin >> xn >> xk >> dx;
+
+    // Вывод заголовка таблицы
+    std::cout << "x\t\tf(x)\t\teps1\t\tf1(x)\t\teps2\t\tf2(x)" << std::endl;
+
+    for (double x = xn; x <= xk; x += dx) {
+        double fx = f(x);
+        double fx1 = f1(x, 0.1);
+        double fx2 = f2(x, 0.000001);
+        // Вывод значений в таблицу
+        std::cout << x << "\t\t" << fx << "\t0.1\t" << fx1 << "\t0.000001\t" << fx2 << std::endl;
+    }
+
+    return 0;
+}
