@@ -4,23 +4,16 @@
 double f(double x) {
     // Здесь необходимо задать функцию, для которой будет проводиться вычисление по ряду Тейлора
     // Пример: return sin(x);
-      int counter = 1;
-      int k = 2;
-      float answer = 1;
-       
-      while (abs(x) < 1) {
-         if (counter % 2 == 0) {
-            answer += k * pow(x, k - 1);
-            counter++;
-         } 
-           
-         else {
-            answer -= k * pow(x, k - 1);
-            counter++;
-         };
-      }
-       
-   return answer;
+    int counter = 0;
+    double summ = 0;
+    double term = 1;
+    for (int k = 0; ; k++) {
+        summ += term;
+        counter++;
+        if (abs(term) >= 1) break;
+        term *= pow(-1, k) * (k + 1) * pow(x, k);
+    }
+    return summ;
 }
 
 double f1(double x, double eps1) {
