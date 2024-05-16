@@ -1,0 +1,244 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Tour {
+public:
+    std::string destination;
+    int duration;
+    float price;
+
+    Tour(std::string dest, int dur, float pr) : destination(dest), duration(dur), price(pr) {}
+};
+
+class Client {
+public:
+    std::string fullName;
+    int age;
+    std::string email;
+
+    Client(std::string name, int a, std::string e) : fullName(name), age(a), email(e) {}
+};
+
+class Hotel {
+public:
+    std::string name;
+    std::string location;
+    int capacity;
+
+    Hotel(std::string n, std::string loc, int cap) : name(n), location(loc), capacity(cap) {}
+};
+
+class Stay {
+private:
+    std::string arrivalDate;
+    int duration;
+
+public:
+    Stay(std::string date, int dur) : arrivalDate(date), duration(dur) {}
+
+    // Методы доступа к данным (геттеры)
+    std::string getArrivalDate() const {
+        return arrivalDate;
+    }
+
+    int getDuration() const {
+        return duration;
+    }
+};
+
+
+class DatabaseInfo {
+public:
+    std::string version;
+
+    DatabaseInfo(const char* ver) : version(ver) {}
+};
+
+class DataManager {
+public:
+    std::vector<std::string> data;
+
+    void addData(const std::string& newData) {
+        data.push_back(newData);
+    }
+};
+
+class TourDatabase : public DatabaseInfo, public DataManager {
+public:
+    std::vector<Tour> tours;
+    std::vector<Client> clients;
+    std::vector<Hotel> hotels;
+    std::vector<Stay> stays;
+
+    TourDatabase(const char* ver) : DatabaseInfo(ver) {}
+
+    virtual void addTour(const Tour& t) {
+        tours.push_back(t);
+        addData("Недавно добавленные туры: " + t.destination);
+    }
+
+    virtual void addClient(const Client& c) {
+        clients.push_back(c);
+        addData("Недавно добавленные клиенты: " + c.fullName);
+    }
+
+    virtual void addHotel(const Hotel& h) {
+        hotels.push_back(h);
+        addData("Недавно добавленные отели: " + h.name);
+    }
+
+    void assignTourToClient(const Tour& t, const Client& c, const Hotel& h, const Stay& s) {
+        stays.push_back(s);
+        addData("Назначен тур в " + t.destination + " клиенту " + c.fullName + " в отеле " + h.name + " с датой въезда " + s.getArrivalDate() + " на " + std::to_string(s.getDuration()) + " дня(дней)");
+    }
+
+    void openDatabase() {
+        std::cout << "База данных открыта. Версия: " << version << std::endl;
+    }
+
+    void viewTours() {
+        if (tours.empty()) {
+            std::cout << "База данных не содержит туров." << std::endl;
+        } else {
+            std::cout << "Список туров:" << std::endl;
+            for (const auto& tour : tours) {
+                std::cout << "Место: " << tour.destination << ", Продолжительность: " << tour.duration << " дней, Цена: " << tour.price << std::endl;
+            }
+        }
+    }
+
+    void viewClients() {
+        if (clients.empty()) {
+            std::cout << "База данных не содержит клиентов." << std::endl;
+        } else {
+            std::cout << "Список клиентов:" << std::endl;
+            for (const auto& client : clients) {
+                std::cout << "Имя: " << client.fullName << ", Возраст: " << client.age << ", Почта: " << client.email << std::endl;
+            }
+        }
+    }
+
+    void viewHotels() {
+        if (hotels.empty()) {
+            std::cout << "База данных не содержит отелей." << std::endl;
+        } else {
+            std::cout << "Список отелей:" << std::endl;
+            for (const auto& hotel : hotels) {
+                std::cout << "Название: " << hotel.name << ", Местоположение: " << hotel.location << ", Вместимость: " << hotel.capacity << std::endl;
+            }
+        }
+    }
+};
+
+int main() {
+    TourDatabase tourDB("v1.0");
+    setlocale(LC_CTYPE, "RUS");
+
+    int choice;
+    do {
+        std::cout << "1. Открыть базу данных\n2. Добавить тур\n3. Добавить клиента\n4. Добавить отель\n5. Назначить тур клиенту\n6. Просмотреть туры\n7. Просмотреть клиентов\n8. Просмотреть отели\n9. Просмотреть данные\n10. Выйти\nВыберите действие: ";
+        std::cin >> choice;
+        switch (choice) {
+            case 1:
+                tourDB.openDatabase();
+                break;
+            case 2: {
+                std::string dest;
+                int dur;
+                float pr;
+                std::cout << "Введите информацию о туре (например, Франция, 7, 1500.0): ";
+                std::cin >> dest >> dur >> pr;
+                Tour t(dest, dur, pr);
+                tourDB.addTour(t);
+                std::cout << "Тур добавлен в базу данных." << std::endl;
+                break;
+            }
+            case 3: {
+                std::string name, email;
+                int age;
+                std::cout << "Введите информацию о клиенте (например, Иванов Иван, 25, ivanov@example.com): ";
+                std::cin.ignore();
+                std::getline(std::cin, name);
+                std::cin >> age >> email;
+                Client c(name, age, email);
+                tourDB.addClient(c);
+                std::cout << "Клиент добавлен в базу данных." << std::endl;
+                break;
+            }
+            case 4: {
+                std::string name, location;
+                int capacity;
+                std::cout << "Введите информацию об отеле (например, Отель Париж, Париж, 100): ";
+                std::cin.ignore();
+                std::getline(std::cin, name);
+                std::getline(std::cin, location);
+                std::cin >> capacity;
+                Hotel h(name, location, capacity);
+                tourDB.addHotel(h);
+                std::cout << "Отель добавлен в базу данных." << std::endl;
+                break;
+            }
+            case 5: {
+                int tourIndex, clientIndex, hotelIndex;
+                if (tourDB.tours.empty() || tourDB.clients.empty() || tourDB.hotels.empty()) {
+                    std::cout << "База данных не содержит туров, клиентов или отелей." << std::endl;
+                } else {
+                    std::cout << "Выберите тур для назначения клиенту (введите индекс тура): ";
+                    std::cin >> tourIndex;
+                    if (tourIndex >= 0 && tourIndex < tourDB.tours.size()) {
+                        std::cout << "Выберите клиента для назначения тура (введите индекс клиента): ";
+                        std::cin >> clientIndex;
+                        if (clientIndex >= 0 && clientIndex < tourDB.clients.size()) {
+                            std::cout << "Доступные отели:" << std::endl;
+                            for (int i = 0; i < tourDB.hotels.size(); ++i) {
+                                std::cout << i << ". " << tourDB.hotels[i].name << " (" << tourDB.hotels[i].location << ")" << std::endl;
+                            }
+                            std::cout << "Выберите отель: ";
+                            std::cin >> hotelIndex;
+                            if (hotelIndex >= 0 && hotelIndex < tourDB.hotels.size()) {
+                                std::string arrivalDate;
+                                int stayDuration;
+                                std::cout << "Введите дату прибытия и длительность проживания (например, 2024-06-01 5): ";
+                                std::cin >> arrivalDate >> stayDuration;
+                                Stay s(arrivalDate, stayDuration);
+                                tourDB.assignTourToClient(tourDB.tours[tourIndex], tourDB.clients[clientIndex], tourDB.hotels[hotelIndex], s);
+                                std::cout << "Тур назначен клиенту." << std::endl;
+                            } else {
+                                std::cout << "Некорректный индекс отеля." << std::endl;
+                            }
+                        } else {
+                            std::cout << "Некорректный индекс клиента." << std::endl;
+                        }
+                    } else {
+                        std::cout << "Некорректный индекс тура." << std::endl;
+                    }
+                }
+                break;
+            }
+            case 6:
+                tourDB.viewTours();
+                break;
+            case 7:
+                tourDB.viewClients();
+                break;
+            case 8:
+                tourDB.viewHotels();
+                break;
+            case 9:
+                std::cout << "Просмотр данных:" << std::endl;
+                for (const auto& item : tourDB.data) {
+                    std::cout << item << std::endl;
+                }
+                break;
+            case 10:
+                std::cout << "Выход." << std::endl;
+                break;
+            default:
+                std::cout << "Некорректный выбор." << std::endl;
+                break;
+        }
+    } while (choice != 10);
+
+    return 0;
+}
